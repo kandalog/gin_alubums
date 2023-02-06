@@ -26,6 +26,7 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/albums", getAlbums)
+	router.GET("/albums/:id", getAlbumByID)
 	router.POST("/albums", postAlbums)
 
 	// ":8080"
@@ -47,4 +48,17 @@ func postAlbums(c *gin.Context) {
 	// albumsスライスに追加
 	albums = append(albums, newAlbum)
 	c.IndentedJSON(http.StatusCreated, newAlbum)
+}
+
+// 特定のアルバムを取得
+func getAlbumByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+
+	for _, a := range albums {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 }
